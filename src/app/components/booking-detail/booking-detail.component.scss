@@ -1,0 +1,325 @@
+.booking-detail {
+  position: sticky;
+  top: var(--space-4);
+}
+
+// ── Tus reservas ──────────────────────────────────────────────────────
+.reserved-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.reserved-section__title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.reserved-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reserved-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: rgba(200, 255, 77, 0.06);
+  border-left: 3px solid var(--color-accent);
+}
+
+.reserved-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.reserved-item__name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.reserved-item__schedule {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.btn--cancel {
+  flex-shrink: 0;
+  background-color: transparent;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn--cancel:hover {
+  background-color: var(--color-danger);
+  color: #14161b;
+}
+
+.reserved-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.reserved-empty p {
+  margin: 0;
+}
+
+.reserved-empty__hint {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+// ── Modal de detalle ──────────────────────────────────────────────────
+.detail-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 0.15s ease;
+}
+
+.detail-modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  width: min(480px, calc(100vw - var(--space-5) * 2));
+  animation: rise 0.2s ease;
+}
+
+.detail-modal__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: var(--space-1);
+}
+
+.detail-modal__close:hover {
+  color: var(--color-text);
+}
+
+.detail-modal__class {
+  font-size: 1.6rem;
+  padding-right: var(--space-5);
+}
+
+.detail-modal__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.detail-modal__field {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detail-modal__field:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detail-modal__field dt {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.detail-modal__field dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.detail-modal__full-text {
+  color: var(--color-danger);
+}
+
+// ── Formulario de reserva ─────────────────────────────────────────────
+.reservation-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: var(--space-2) var(--space-3);
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.form-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.form-input--error {
+  border-color: var(--color-danger);
+}
+
+.form-error {
+  font-size: 0.8rem;
+  color: var(--color-danger);
+}
+
+.btn--full {
+  width: 100%;
+  padding: var(--space-3);
+  font-size: 1rem;
+}
+
+.btn--full:disabled {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+// ── Modal de confirmación ─────────────────────────────────────────────
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 110;
+  animation: fade-in 0.15s ease;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  max-width: 360px;
+  width: calc(100% - var(--space-5) * 2);
+  text-align: center;
+  animation: rise 0.2s ease;
+}
+
+.modal__icon {
+  margin: 0;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.modal__title {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.modal__reservant {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.modal__class {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.modal__schedule {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.modal__btn {
+  margin-top: var(--space-2);
+  min-width: 120px;
+}

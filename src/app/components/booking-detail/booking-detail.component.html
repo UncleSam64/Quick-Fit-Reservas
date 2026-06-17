@@ -1,0 +1,124 @@
+<div class="booking-detail">
+  @if (reservedBookings$ | async; as reserved) {
+    @if (reserved.length > 0) {
+      <section class="reserved-section" data-testid="reserved-section">
+        <h3 class="reserved-section__title">Tus reservas</h3>
+        <ul class="reserved-list">
+          @for (r of reserved; track r.id) {
+            <li class="reserved-item" [attr.data-testid]="'reserved-item-' + r.id">
+              <div class="reserved-item__info">
+                <span class="reserved-item__name">{{ r.className }}</span>
+                <span class="reserved-item__schedule">{{ r.schedule }}</span>
+              </div>
+              <button
+                type="button"
+                class="btn btn--cancel"
+                [attr.data-testid]="'cancel-btn-' + r.id"
+                (click)="onCancelReservation(r.id)"
+                aria-label="Cancelar reserva de {{ r.className }}"
+              >
+                Cancelar
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+    } @else {
+      <div class="reserved-empty" data-testid="reserved-empty">
+        <p>Aún no tienes reservas.</p>
+        <p class="reserved-empty__hint">Selecciona una clase y reserva tu lugar.</p>
+      </div>
+    }
+  }
+</div>
+
+@if (booking$ | async; as booking) {
+  <div class="detail-backdrop" (click)="onClose()" role="dialog" aria-modal="true" aria-labelledby="detail-title" data-testid="detail-modal">
+    <div class="detail-modal" (click)="$event.stopPropagation()">
+      <button type="button" class="detail-modal__close" data-testid="detail-modal-close" (click)="onClose()" aria-label="Cerrar detalle">
+        &#x2715;
+      </button>
+
+      <h2 class="detail-modal__class" id="detail-title" data-testid="detail-modal-class">{{ booking.className }}</h2>
+
+      <dl class="detail-modal__fields">
+        <div class="detail-modal__field">
+          <dt>Profesor</dt>
+          <dd data-testid="detail-modal-instructor">{{ booking.instructor }}</dd>
+        </div>
+        <div class="detail-modal__field">
+          <dt>Horario</dt>
+          <dd data-testid="detail-modal-schedule">{{ booking.schedule }}</dd>
+        </div>
+        <div class="detail-modal__field">
+          <dt>Cupos</dt>
+          <dd data-testid="detail-modal-spots" [class.detail-modal__full-text]="booking.availableSpots === 0">
+            {{ booking.availableSpots > 0 ? booking.availableSpots + ' disponibles' : 'Sin cupos' }}
+          </dd>
+        </div>
+      </dl>
+
+      <form [formGroup]="reservationForm" class="reservation-form" (ngSubmit)="onReserve(booking)">
+        <div class="form-field">
+          <label class="form-label" for="nombre">Nombre completo</label>
+          <input
+            id="nombre"
+            type="text"
+            class="form-input"
+            [class.form-input--error]="nombreInvalid"
+            formControlName="nombre"
+            data-testid="form-nombre"
+            placeholder="Ej. María García"
+            autocomplete="name"
+          />
+          @if (nombreInvalid) {
+            <span class="form-error" role="alert" data-testid="error-nombre">Ingresa tu nombre completo (min. 2 caracteres).</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="telefono">Telefono</label>
+          <input
+            id="telefono"
+            type="tel"
+            class="form-input"
+            [class.form-input--error]="telefonoInvalid"
+            formControlName="telefono"
+            data-testid="form-telefono"
+            placeholder="Ej. +54 9 11 1234-5678"
+            autocomplete="tel"
+          />
+          @if (telefonoInvalid) {
+            <span class="form-error" role="alert" data-testid="error-telefono">Ingresa un telefono valido (7-15 digitos).</span>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn--accent btn--full"
+          data-testid="reserve-btn"
+          [disabled]="booking.availableSpots === 0"
+        >
+          {{ booking.availableSpots === 0 ? 'Sin cupos disponibles' : 'Reservar' }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
+
+@if (reservationState === 'confirmed') {
+  @if (confirmedBooking) {
+    <div class="modal-backdrop" (click)="onCloseModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title" data-testid="confirmation-modal">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <p class="modal__icon" aria-hidden="true">&#10003;</p>
+        <h3 class="modal__title" id="modal-title">Reserva confirmada</h3>
+        <p class="modal__reservant" data-testid="confirmation-name">{{ confirmedName }}</p>
+        <p class="modal__class" data-testid="confirmation-class">{{ confirmedBooking.className }}</p>
+        <p class="modal__schedule" data-testid="confirmation-schedule">{{ confirmedBooking.schedule }}</p>
+        <button type="button" class="btn btn--accent modal__btn" data-testid="confirmation-accept" (click)="onCloseModal()">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  }
+}
