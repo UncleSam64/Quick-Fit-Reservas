@@ -1,0 +1,58 @@
+<section class="booking-list" data-testid="booking-list">
+  <header class="booking-list__header">
+    <h2>Clases disponibles</h2>
+    <p class="booking-list__subtitle">Elige una clase para ver el detalle y reservar tu lugar.</p>
+  </header>
+
+  @if (state === 'loading') {
+    <div class="state-panel state-panel--loading" role="status" aria-live="polite" data-testid="state-loading">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Cargando clases disponibles…</p>
+    </div>
+  }
+
+  @if (state === 'error') {
+    <div class="state-panel state-panel--error" role="alert" data-testid="state-error">
+      <p class="state-panel__title">No pudimos cargar las clases</p>
+      <p class="state-panel__hint">Revisa tu conexión e inténtalo de nuevo.</p>
+      <button type="button" class="btn btn--ghost" data-testid="retry-btn" (click)="loadBookings()">Reintentar</button>
+    </div>
+  }
+
+  @if (state === 'success') {
+    @if (bookings.length === 0) {
+      <div class="state-panel state-panel--empty" data-testid="state-empty">
+        <p class="state-panel__title">Todavía no hay clases publicadas</p>
+        <p class="state-panel__hint">Vuelve a revisar más tarde: el cronograma se actualiza todas las semanas.</p>
+      </div>
+    } @else {
+      <ul class="booking-cards">
+        @for (booking of bookings; track booking.id) {
+          <li
+            class="booking-card"
+            [class.booking-card--selected]="booking.id === selectedBookingId"
+            [class.booking-card--full]="booking.availableSpots === 0"
+            [attr.data-testid]="'booking-card-' + booking.id"
+          >
+            <div class="booking-card__info">
+              <h3 class="booking-card__title">{{ booking.className }}</h3>
+              <p class="booking-card__meta">{{ booking.instructor }} · {{ booking.schedule }}</p>
+            </div>
+            <div class="booking-card__spots">
+              <span class="booking-card__spots-value" [attr.data-testid]="'booking-spots-' + booking.id">{{ booking.availableSpots }}</span>
+              <span class="booking-card__spots-label">cupos</span>
+            </div>
+            <button
+              type="button"
+              class="btn btn--accent"
+              [attr.data-testid]="'select-btn-' + booking.id"
+              (click)="onSelect(booking)"
+            >
+              Ver más
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>
