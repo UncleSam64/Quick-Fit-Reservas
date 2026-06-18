@@ -33,7 +33,7 @@ AppComponent (layout principal, grilla responsiva de 2 columnas)
 ```
 
 - **AppComponent**: define el shell de la pagina (header + grilla) y compone los dos componentes de feature. No tiene logica de negocio.
-- **BookingListComponent**: se suscribe a `BookingService.getBookings()` en `ngOnInit`, maneja su propio estado de UI (`loading` / `error` / `success`) y renderiza el empty state cuando la lista viene vacia. Al hacer clic en "Ver mas" notifica la seleccion al servicio. El contador de cupos en cada tarjeta se actualiza en tiempo real cuando se realiza una reserva.
+- **BookingListComponent**: expone un observable `vm$` que combina el estado de UI (`loading` / `error` / `success`) y la lista de clases en un unico stream. El template se suscribe con `async` pipe, lo que garantiza que el contador de cupos se actualiza en tiempo real cuando otro componente confirma una reserva. Al hacer clic en "Ver mas" notifica la seleccion al servicio.
 - **BookingDetailComponent**: muestra el panel "Tus reservas" en la columna derecha. Al seleccionar una clase abre un modal con el detalle y un formulario para ingresar nombre y telefono. Al confirmar la reserva, abre un popup de confirmacion. Permite cancelar reservas existentes.
 
 Carpetas organizadas por tipo (`components/`, `services/`, `models/`, `interceptors/`), con un componente por carpeta junto a su template y estilos.
@@ -50,7 +50,7 @@ Por que:
 - Un `BehaviorSubject` mantiene el ultimo valor emitido, de modo que cualquier componente que se suscriba tarde igual recibe el valor actual.
 - El mismo mecanismo se reutiliza para tres streams independientes: la clase seleccionada (`selectedBooking$`), el listado completo (`bookingsSubject`) y las reservas del usuario (`reservedBookings$`).
 
-Los templates se suscriben con el pipe `async`, evitando suscripciones manuales y el manejo explicito de `unsubscribe`.
+Ambos templates se suscriben con el pipe `async`, evitando suscripciones manuales y el manejo explicito de `unsubscribe`. Esto es especialmente importante para `BookingListComponent`: dado que el evento de reserva ocurre en su componente hermano (`BookingDetailComponent`), una suscripcion manual no dispara el ciclo de change detection en Angular 22; el `async` pipe resuelve esto llamando a `markForCheck()` internamente cada vez que llega un nuevo valor.
 
 ---
 
@@ -100,7 +100,7 @@ Cobertura actual:
 | Archivo                              | Casos cubiertos                                                                 |
 | ------------------------------------ | ------------------------------------------------------------------------------- |
 | `booking.service.spec.ts`            | creacion, getBookings, selectedBooking$, selectBooking, clearSelection, reserveSpot (actualizacion de lista y panel), cancelReservation, spots minimo cero |
-| `booking-list.component.spec.ts`     | estado loading/success/error/empty, contadores de cupos, seleccion de tarjeta   |
+| `booking-list.component.spec.ts`     | estado loading (Subject sin emitir) / success / error / empty, contadores de cupos, seleccion de tarjeta   |
 | `booking-detail.component.spec.ts`   | modal de detalle, validacion del form, errores por campo, reserva exitosa, confirmacion, cancelacion, restauracion de cupos |
 | `app.component.spec.ts`              | creacion, titulo, presencia de componentes hijos                                |
 

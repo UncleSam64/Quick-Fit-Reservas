@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { BookingListComponent } from './booking-list.component';
 import { BookingService } from '../../services/booking.service';
 import { Booking } from '../../models/booking.model';
@@ -31,29 +31,22 @@ describe('BookingListComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should start in loading state before ngOnInit', () => {
-    bookingServiceSpy.getBookings.and.returnValue(of(mockBookings));
-    expect(component.state).toBe('loading');
-    fixture.detectChanges();
-  });
-
   it('should show the loading panel while fetching', () => {
-    bookingServiceSpy.getBookings.and.returnValue(of(mockBookings));
-    expect(q('state-loading')).toBeFalsy();
-    // before detectChanges state is 'loading' but template hasn't rendered yet
+    const bookings$ = new Subject<Booking[]>();
+    bookingServiceSpy.getBookings.and.returnValue(bookings$);
     fixture.detectChanges();
-    // synchronous of() resolves before first render so success is shown directly
-    expect(q('state-loading')).toBeFalsy();
+
+    expect(q('state-loading')).toBeTruthy();
   });
 
-  it('should move to success state and render booking cards', () => {
+  it('should render booking cards on success', () => {
     bookingServiceSpy.getBookings.and.returnValue(of(mockBookings));
     fixture.detectChanges();
 
-    expect(component.state).toBe('success');
-    expect(component.bookings.length).toBe(2);
     expect(q('booking-card-1')).toBeTruthy();
     expect(q('booking-card-2')).toBeTruthy();
+    expect(q('state-error')).toBeFalsy();
+    expect(q('state-empty')).toBeFalsy();
   });
 
   it('should show the correct available spots per card', () => {
@@ -64,11 +57,10 @@ describe('BookingListComponent', () => {
     expect(q('booking-spots-2').textContent.trim()).toBe('0');
   });
 
-  it('should move to error state and show error panel when the request fails', () => {
+  it('should show error panel and retry button when the request fails', () => {
     bookingServiceSpy.getBookings.and.returnValue(throwError(() => new Error('500')));
     fixture.detectChanges();
 
-    expect(component.state).toBe('error');
     expect(q('state-error')).toBeTruthy();
     expect(q('retry-btn')).toBeTruthy();
   });
